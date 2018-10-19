@@ -1,7 +1,7 @@
 # packages-api
 Simple API for CRUD access of packages
 
-<img width="1909" alt="swagger-ui" src="https://user-images.githubusercontent.com/567384/47229145-ef7d1880-d3be-11e8-8eda-5d985b21e7ad.png">
+<img width="1909" alt="swagger-ui" src="https://user-images.githubusercontent.com/567384/47230672-c494c380-d3c2-11e8-97a7-1b5c74425694.png">
 
 ## Overview
 A Java REST API written with the Spring Boot Framework and embedded H2 database to enable CRUD access of Packages. The price of a Package can be requested in any of the currencies supported by Fixer API (exposed by the /currency endpoint).
