@@ -33,7 +33,7 @@ A `fixer.api.key` is required to connect to the Fixer API. This is best injected
 2. Build using maven `mvn clean install`
 3. Run api/com.kerby.example.api.Application main with Program Arguments `--fixer.api.key="REPLACE_WITH_KEY"`
 
-Once deployed API documentation can be found at: **localhost:8080/api/swagger-ui.html**
+Once deployed API documentation can be found at: **http://www.localhost:8080/api/swagger-ui.html**
 
 ## Tests
 
