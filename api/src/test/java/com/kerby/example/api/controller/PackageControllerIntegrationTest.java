@@ -72,7 +72,7 @@ public class PackageControllerIntegrationTest {
 
     @Test
     public void when_callGetPackage_expect200AndPackageResponse() throws Exception {
-        final Package aPackage = new Package("Foo", "Foo test", Arrays.asList(new Product("alpha_1", "Alpha", new BigDecimal(10.00))));
+        final Package aPackage = new Package("Foo", "Foo test", Arrays.asList(new Product("alpha_1", "Alpha", new BigDecimal(100))));
         aPackage.setId(1);
         aPackage.setPrice(new BigDecimal(10));
         Mockito.when(packageService.getPackage(null, 1)).thenReturn(aPackage);
@@ -86,17 +86,17 @@ public class PackageControllerIntegrationTest {
                 .andExpect(jsonPath("$.package.price", Matchers.is(10)))
                 .andExpect(jsonPath("$.package.products[0].id", Matchers.is("alpha_1")))
                 .andExpect(jsonPath("$.package.products[0].name", Matchers.is("Alpha")))
-                .andExpect(jsonPath("$.package.products[0].usdPrice", Matchers.is(10)));
+                .andExpect(jsonPath("$.package.products[0].usdPrice", Matchers.is(100)));
     }
 
     @Test
     public void when_callGetPackages_expect200AndPackagesResponse() throws Exception {
-        final Package aPackageFoo = new Package("Foo", "Foo test", Arrays.asList(new Product("alpha_1", "Alpha", new BigDecimal(10.00))));
-        final Package aPackageBar = new Package("Bar", "Bar test", Arrays.asList(new Product("beta_1", "Beta", new BigDecimal(20.00))));
+        final Package aPackageFoo = new Package("Foo", "Foo test", Arrays.asList(new Product("alpha_1", "Alpha", new BigDecimal(100))));
+        final Package aPackageBar = new Package("Bar", "Bar test", Arrays.asList(new Product("beta_1", "Beta", new BigDecimal(200))));
         aPackageFoo.setId(1);
-        aPackageFoo.setPrice(new BigDecimal(10));
+        aPackageFoo.setPrice(new BigDecimal(100));
         aPackageBar.setId(1);
-        aPackageBar.setPrice(new BigDecimal(20));
+        aPackageBar.setPrice(new BigDecimal(200));
 
         Mockito.when(packageService.getPackages(null)).thenReturn(Arrays.asList(aPackageFoo, aPackageBar));
 
@@ -106,17 +106,17 @@ public class PackageControllerIntegrationTest {
                 .andExpect(jsonPath("$.packages[0].id", Matchers.is(1)))
                 .andExpect(jsonPath("$.packages[0].name", Matchers.is("Foo")))
                 .andExpect(jsonPath("$.packages[0].description", Matchers.is("Foo test")))
-                .andExpect(jsonPath("$.packages[0].price", Matchers.is(10)))
+                .andExpect(jsonPath("$.packages[0].price", Matchers.is(100)))
                 .andExpect(jsonPath("$.packages[0].products[0].id", Matchers.is("alpha_1")))
                 .andExpect(jsonPath("$.packages[0].products[0].name", Matchers.is("Alpha")))
-                .andExpect(jsonPath("$.packages[0].products[0].usdPrice", Matchers.is(10)))
+                .andExpect(jsonPath("$.packages[0].products[0].usdPrice", Matchers.is(100)))
                 .andExpect(jsonPath("$.packages[1].id", Matchers.is(1)))
                 .andExpect(jsonPath("$.packages[1].name", Matchers.is("Bar")))
                 .andExpect(jsonPath("$.packages[1].description", Matchers.is("Bar test")))
-                .andExpect(jsonPath("$.packages[1].price", Matchers.is(20)))
+                .andExpect(jsonPath("$.packages[1].price", Matchers.is(200)))
                 .andExpect(jsonPath("$.packages[1].products[0].id", Matchers.is("beta_1")))
                 .andExpect(jsonPath("$.packages[1].products[0].name", Matchers.is("Beta")))
-                .andExpect(jsonPath("$.packages[1].products[0].usdPrice", Matchers.is(20)));
+                .andExpect(jsonPath("$.packages[1].products[0].usdPrice", Matchers.is(200)));
     }
 
     @Test

@@ -1,5 +1,6 @@
 package com.kerby.example.packages.service;
 
+import com.kerby.example.common.annotations.VisibleForTestMock;
 import com.kerby.example.currency.exceptions.InvalidCurrencyCodeException;
 import com.kerby.example.currency.models.CurrencyCode;
 import com.kerby.example.currency.service.CurrencyService;
@@ -26,6 +27,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 @Service
@@ -101,6 +103,9 @@ public class PackageServiceImpl implements PackageService  {
                 logger.debug(String.format("Converting price: [%s] of package from USD to currency: [%s]", usdTotalPrice, exchangeToCode));
                 result.setPrice(currencyService.convertFromUSD(exchangeToCode, usdTotalPrice));
             }
+
+            result.setPrice(shiftCurrencyDenomination(result.getPrice()));
+
             logger.info(String.format("Returning package: [%s]", result));
         } catch (PackageNotFoundException e) {
            throw e;
@@ -113,10 +118,10 @@ public class PackageServiceImpl implements PackageService  {
 
     @Override
     public List<Package> getPackages(final String exchangeToCurrencyCode) throws PackageServiceException {
-        CurrencyCode exchangeToCode = null;
+        final AtomicReference<CurrencyCode> exchangeToCode = new AtomicReference<>();
         if (StringUtils.isNotBlank(exchangeToCurrencyCode)) {
             try {
-                exchangeToCode = this.currencyService.getCurrencyCodeFromString(exchangeToCurrencyCode);
+                exchangeToCode.set(this.currencyService.getCurrencyCodeFromString(exchangeToCurrencyCode));
             } catch (InvalidCurrencyCodeException e) {
                 throw new IllegalArgumentException("The currency code provided is invalid", e);
             }
@@ -126,19 +131,18 @@ public class PackageServiceImpl implements PackageService  {
         try {
             // find packages
             logger.debug("Getting packages");
-            final List<Package> packageEntities = new ArrayList<>();
-            this.packageRepository.findAll().forEach(packageEntity ->
-                packageEntities.add(PackageMapper.INSTANCE.entityToPackage(packageEntity))
-            );
-            result = packageEntities;
-            logger.debug(String.format("Found packages: [%d]", result.size()));
-            if (exchangeToCode != null) {
-                for (Package packageEntity : packageEntities) {
-                    final BigDecimal usdTotalPrice = packageEntity.getPrice();
+            final List<Package> packages = new ArrayList<>();
+            for (PackageEntity packageEntity : this.packageRepository.findAll()) {
+                final Package aPackage = PackageMapper.INSTANCE.entityToPackage(packageEntity);
+                if (exchangeToCode.get() != null) {
+                    final BigDecimal usdTotalPrice = aPackage.getPrice();
                     logger.debug(String.format("Converting price: [%s] of package from USD to currency: [%s]", usdTotalPrice, exchangeToCode));
-                    packageEntity.setPrice(currencyService.convertFromUSD(exchangeToCode, usdTotalPrice));
+                    aPackage.setPrice(currencyService.convertFromUSD(exchangeToCode.get(), usdTotalPrice));
                 }
+                aPackage.setPrice(shiftCurrencyDenomination(aPackage.getPrice()));
+                packages.add(aPackage);
             }
+            result = packages;
             logger.info(String.format("Returning packages: [%s]", result));
         } catch (Exception e) {
             throw new PackageServiceException("Something went wrong looking up packages", e);
@@ -204,5 +208,20 @@ public class PackageServiceImpl implements PackageService  {
         return result;
     }
 
-
+    /**
+     * Products are stored in cents but packages ideally need presenting in base 10 decimal format.
+     * Otherwise this can cause problems:
+     *  - Clients thinking a returned value of 99.99 is $99.99 when it is really $9.99 (09.99)
+     *  - Relying on clients to perform decimal shifting which may be performed in flawed currency types (float/double) and offering incorrect prices
+     * @param centAmount - amount to convert from cents to dollars
+     * @return correct decimal location for dollars
+     */
+    @VisibleForTestMock
+    BigDecimal shiftCurrencyDenomination(BigDecimal centAmount) {
+        if (centAmount.intValue() > 0) {
+            return centAmount.movePointLeft(2);
+        } else {
+            return centAmount;
+        }
+    }
 }

@@ -1,10 +1,10 @@
 package com.kerby.example.packages.service;
 
-import com.kerby.example.currency.service.CurrencyService;
 import com.kerby.example.database.models.PackageEntity;
 import com.kerby.example.database.repositories.PackageRepository;
 import com.kerby.example.packages.exceptions.PackageNotFoundException;
 import com.kerby.example.packages.exceptions.PackageServiceException;
+import org.hamcrest.Matchers;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -14,6 +14,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import com.kerby.example.packages.models.Package;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Optional;
@@ -106,6 +107,40 @@ public class PackageServiceImplTest extends TestUtility {
         );
 
         Assert.fail("Expected exception");
+    }
+
+    @Test
+    public void when_shiftingCurrencyDenomination_expectCorrectResults() {
+        Assert.assertThat(
+                new BigDecimal(0),
+                Matchers.comparesEqualTo(this.packageService.shiftCurrencyDenomination(new BigDecimal(0)))
+        );
+        Assert.assertThat(
+                new BigDecimal(0.01),
+                Matchers.closeTo(this.packageService.shiftCurrencyDenomination(new BigDecimal(1)), new BigDecimal(0.001))
+        );
+        Assert.assertThat(
+                new BigDecimal(0.10),
+                Matchers.closeTo(this.packageService.shiftCurrencyDenomination(new BigDecimal(10)), new BigDecimal(0.001))
+        );
+        Assert.assertThat(
+                new BigDecimal(1.00),
+                Matchers.closeTo(this.packageService.shiftCurrencyDenomination(new BigDecimal(100)), new BigDecimal(0.001))
+        );
+        Assert.assertThat(
+                new BigDecimal(10.00),
+                Matchers.closeTo(this.packageService.shiftCurrencyDenomination(new BigDecimal(1000)), new BigDecimal(0.001))
+        );
+        Assert.assertThat(
+                new BigDecimal(100.00),
+                Matchers.closeTo(this.packageService.shiftCurrencyDenomination(new BigDecimal(10000)), new BigDecimal(0.001))
+        );
+        Assert.assertThat(
+                new BigDecimal(1000.00),
+                Matchers.closeTo(this.packageService.shiftCurrencyDenomination(new BigDecimal(100000)), new BigDecimal(0.001))
+        );
+
+
     }
 
     // TODO tests on currency conversion, invalid inputs, different character encoding etc

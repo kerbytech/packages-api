@@ -34,7 +34,7 @@ public class PackageMapperTest extends TestUtility {
         Assert.assertEquals("Foo", aPackage.getName());
         Assert.assertEquals("Foo description", aPackage.getDescription());
         Assert.assertEquals( new ArrayList<>(Arrays.asList(PRODUCT_ALPHA, PRODUCT_BETA)), aPackage.getProducts());
-        Assert.assertThat( new BigDecimal(25.00), Matchers.comparesEqualTo(aPackage.getPrice()));
+        Assert.assertThat( new BigDecimal(250), Matchers.comparesEqualTo(aPackage.getPrice()));
     }
 
     @Test

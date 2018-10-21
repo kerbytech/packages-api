@@ -37,17 +37,17 @@ public class PackageRepositoryTest {
         // setup database with dummy data
         packageFooId = (Integer) entityManager.persistAndGetId(new PackageEntity("Foo", "Foo description",
                 Collections.singletonList(
-                    new ProductEntity("alpha_id", "Alpha", new BigDecimal(10.00))
+                    new ProductEntity("alpha_id", "Alpha", new BigDecimal(100))
                 )));
         packageBarId = (Integer) entityManager.persistAndGetId(new PackageEntity("Bar", "Bar description",
                 Arrays.asList(
-                    new ProductEntity("alpha_id", "Alpha", new BigDecimal(10.00)),
-                    new ProductEntity("beta_id", "Beta", new BigDecimal(15.00))
+                    new ProductEntity("alpha_id", "Alpha", new BigDecimal(100)),
+                    new ProductEntity("beta_id", "Beta", new BigDecimal(150))
                 )));
         packageBazId = (Integer) entityManager.persistAndGetId(new PackageEntity("Baz", "Baz description",  Arrays.asList(
-                    new ProductEntity("alpha_id", "Alpha", new BigDecimal(10.00)),
-                    new ProductEntity("beta_id", "Beta", new BigDecimal(15.00)),
-                    new ProductEntity("gamma_id", "Gamma", new BigDecimal(20.00))
+                    new ProductEntity("alpha_id", "Alpha", new BigDecimal(100)),
+                    new ProductEntity("beta_id", "Beta", new BigDecimal(150)),
+                    new ProductEntity("gamma_id", "Gamma", new BigDecimal(200))
                 )));
 
         entityManager.flush();
@@ -59,14 +59,14 @@ public class PackageRepositoryTest {
         /* create and validate new package Biz */
         final PackageEntity packageBiz = new PackageEntity("Biz", "Biz description",
                 Collections.singletonList(
-                    new ProductEntity("delta_id", "Delta", new BigDecimal(10.00))
+                    new ProductEntity("delta_id", "Delta", new BigDecimal(100))
                 ));
         Assert.assertEquals(packageBiz, packageRepository.save(packageBiz));
 
         /* create and validate new package Boz */
         final PackageEntity packageBoz = new PackageEntity("Boz", "Boz description",
                 Collections.singletonList(
-                        new ProductEntity("delta_id", "Delta", new BigDecimal(10.00))
+                        new ProductEntity("delta_id", "Delta", new BigDecimal(100))
                 ));
         Assert.assertEquals(packageBoz, packageRepository.save(packageBoz));
 
@@ -94,13 +94,13 @@ public class PackageRepositoryTest {
         packageFoo.setDescription("Foo description updated");
         // update products using override
         packageFoo.setProductEntities(new ArrayList<>(Arrays.asList(
-                new ProductEntity("alpha_id", "Alpha", new BigDecimal(10.00)),
-                new ProductEntity("beta_id", "Beta", new BigDecimal(15.00))
+                new ProductEntity("alpha_id", "Alpha", new BigDecimal(100)),
+                new ProductEntity("beta_id", "Beta", new BigDecimal(150))
         )));
         // update products using append
-        packageFoo.getProductEntities().add(new ProductEntity("gamma_id", "Gamma", new BigDecimal(20.00)));
-        packageFoo.getProductEntities().add(new ProductEntity("epsilon_id", "Epsilon", new BigDecimal(25.00)));
-        packageFoo.getProductEntities().add(new ProductEntity("zeta_id", "Zeta", new BigDecimal(30.00)));
+        packageFoo.getProductEntities().add(new ProductEntity("gamma_id", "Gamma", new BigDecimal(200)));
+        packageFoo.getProductEntities().add(new ProductEntity("epsilon_id", "Epsilon", new BigDecimal(250)));
+        packageFoo.getProductEntities().add(new ProductEntity("zeta_id", "Zeta", new BigDecimal(300)));
 
         final PackageEntity newPackageFoo = packageRepository.save(packageFoo);
         // assert object equality
