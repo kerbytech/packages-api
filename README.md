@@ -26,7 +26,7 @@ A `fixer.api.key` is required to connect to the Fixer API. This is best injected
 
 ### Run in Maven
 1. Build using maven `mvn clean install`
-2. Launch service `mvn spring-boot:run -Dspring-boot.run.arguments=--fixer.api.key=REPLACE_WITH_KEY`
+2. Launch api service `mvn -pl api spring-boot:run -Dspring-boot.run.arguments=--fixer.api.key=REPLACE_WITH_KEY`
 
 ### Run as Java Application
 1. Import into IDE
